@@ -1,35 +1,29 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def detect_blur_fit(image, size=60, thresh= 10, vis=False):
-    (h, w) = image.shape
-    (cX, cY) = (int(w/2.0), int(h/2.0))
+#function to calculate the value of the blur of an image
+def detect_blur_fit(image, size=40):
+    #getting the size of the image
+    (height, width) = image.shape
+    #finding the center of the image
+    (X_center, Y_center) = (int(width/2.0), int(height/2.0))
 
-    #implementing fft on image
+    ## implementing fft on image
+    # performing 2D FFT on the gray image 
     fft = np.fft.fft2(image)
+    # shifting the zero-frequenY_center component to the center of the spectrum 
     fftShift = np.fft.fftshift(fft)
 
-    if vis:
-        magnitude = 20 * np.log(np.abs(fftShift))
-
-        (fig, ax) = plt.subplot(1, 2, )
-        ax[0].imshow(image, cmap="gray")
-        ax[0].set_title("Input")
-        ax[0].set_xticks([])
-        ax[0].set_yticks([])
-		# display the magnitude image
-        ax[1].imshow(magnitude, cmap="gray")
-        ax[1].set_title("Magnitude Spectrum")
-        ax[1].set_xticks([])
-        ax[1].set_yticks([])
-        
-        plt.show()
-
-    fftShift[cY - size:cY + size, cX - size:cX + size] = 0
+    # setting all the values of the zero-frequecny component to 0
+    fftShift[Y_center - size:Y_center + size, X_center - size:X_center + size] = 0
+    # inverting the previously performed shift
     fftShift = np.fft.ifftshift(fftShift)
+    # inverting the un-shifted image
     recon = np.fft.ifft2(fftShift)
 
+    # finding the magnitude and then the mean of the re-inverted image
     magnitude = 20 * np.log(np.abs(recon))
     mean = np.mean(magnitude)
 
-    return (mean, mean <= thresh)
+    # returning the mean calculated
+    return mean
