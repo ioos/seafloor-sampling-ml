@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from skimage.morphology import skeletonize
 from statistics import median
 import pandas as pd
-
+import config
 
 #defining the kernel to perform various operations like opening, closing etc
 kernel = np.array([[0, 0, 1, 0, 0],
@@ -44,7 +44,11 @@ area_array = []
 #function to extract lasers 
 def laser_detection(image):
     #cropping the image to only focus on laser area
-    image =  image[:, 2000:3000]
+    x1 = config.X1_COORDINATE_IMAGE_CROPPED
+    x2 = config.X2_COORDINATE_IMAGE_CROPPED
+    y1 = config.Y1_COORDINATE_IMAGE_CROPPED
+    y2 = config.Y2_COORDINATE_IMAGE_CROPPED
+    image =  image[y1:y2, x1:x2]
     #converting image from BGR to RGB
     image =  cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     #converting the image to HSV format
@@ -119,7 +123,7 @@ def measures_laser_distance(color_thresh):
     for i in range (0,len(points)-1):
       for j in range(i, len(points)-1):
         if points[i][0] == points[j][0]:
-          if points[j][1] - points[i][1] > 40 and points[j][1] - points[i][1] < 200:
+          if points[j][1] - points[i][1] > config.MIN_DIST_BETWEEN_LASERS and points[j][1] - points[i][1] < config.MAX_DIST_BETWEEN_LASERS:
             # print(points[i], points[j])
             y_coordinates_parallel.append(points[j][1]-points[i][1])
 
@@ -128,7 +132,7 @@ def measures_laser_distance(color_thresh):
       for i in range (0,len(points)-1):
         for j in range(i, len(points)-1):
           if points[i][0]+1 == points[j][0]:
-            if points[j][1] - points[i][1] > 40 and points[j][1] - points[i][1] < 200:
+            if points[j][1] - points[i][1] > config.MIN_DIST_BETWEEN_LASERS and points[j][1] - points[i][1] < config.MAX_DIST_BETWEEN_LASERS:
             #   print(points[i], points[j])
               y_coordinates_parallel.append(points[j][1]-points[i][1])
 
@@ -187,14 +191,14 @@ if __name__ ==  "__main__":
 
             # if lasers are not detected or HSV segmentation considers parts of image to be same 
             # color of lasers, then invert the image and try to extract lasers
-            if laser_area >= 5000 or laser_area == 0:  
+            if laser_area >= config.ESTIMATED_LASER_AREA or laser_area == 0:  
                 #checking lasers on the inverted image and performing laser detection
                 laser_detected_image = inverse_laser_detection(image)
                 #finding the area of the detected lasers
                 laser_area = area_lasers(laser_detected_image)
 
             ### if the area of the laser is greater than 5000 or 0 then they aren't lasers or the lasers are not being detected
-            if laser_area >= 5000 or laser_area == 0: 
+            if laser_area >= config.ESTIMATED_LASER_AREA or laser_area == 0: 
                 #we add in the details and fill the values as 0 for the laser 
                 transect_name.append(folder)
                 image_name.append(frame.split(".")[0])
@@ -205,9 +209,9 @@ if __name__ ==  "__main__":
                 image_name.append(frame.split(".")[0])
                 laser_distance.append(measures_laser_distance(laser_detected_image))
             
-            break
+            # break
 
-    df = pd.DataFrame(list(zip(transect_name, image_name, laser_distance, area_array)), columns= ["folder_name","image_name", "blur_level", "area"])
+    df = pd.DataFrame(list(zip(transect_name, image_name, laser_distance, area_array)), columns= ["folder_name","image_name", "laser_distance", "area"])
     df = df.sort_values(by = ["image_name"])
     df.to_csv(args["csv"]+".csv", index=False)
 
