@@ -15,7 +15,7 @@ There are a couple ways you can do this.
 1. Click on Green Code button on the right side of the repository and donwload the zip file.
 2. If you have a G1itHub account and git installed on your machine, fork the repository and clone ir.
 3. Use using the follwoing code on the terminal to clone the repository.
-    ```git clone `https://github.com/ioos/seafloor-sampling-ml.git``
+    ```git clone `https://github.com/ioos/seafloor-sampling-ml.git```
 
 
 #### You need to install an ```anaconda``` environment to run the code. 
