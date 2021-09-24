@@ -5,6 +5,9 @@ import imutils
 import cv2 
 import os
 import pandas as pd
+import config
+
+
 
 # adding parser 
 ap = argparse.ArgumentParser()
@@ -37,7 +40,11 @@ for folder in folders:
         orig = cv2.imread(file_location)
         #cropping the image to have only 60% of the image to detect blur
         # (edge removal due to extra blurry nature)
-        orig = orig[714:3174, 952:4231]
+        x1 = config.X1_COORDINATE_IMAGE_CROPPED
+        x2 = config.X2_COORDINATE_IMAGE_CROPPED
+        y1 = config.Y1_COORDINATE_IMAGE_CROPPED
+        y2 = config.Y2_COORDINATE_IMAGE_CROPPED
+        orig = orig[y1:y2, x1:x2]
         #resizing image 
         orig = imutils.resize(orig, width=1500)
         #converting the image to gray
