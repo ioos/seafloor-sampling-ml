@@ -12,8 +12,8 @@ This repo consists of work on Sea Floor Sampling using machine learning and comp
 
 There are a couple ways you can do this.
 
-1. Click on Green Code button on the right side of the repository and donwload the zip file.
-2. If you have a G1itHub account and git installed on your machine, fork the repository and clone ir.
+1. Click on Green Code button on the right side of the repository and download the zip file.
+2. If you have a GitHub account and git installed on your machine, fork the repository and clone it.
 3. Use using the follwoing code on the terminal to clone the repository.
     ```git clone https://github.com/ioos/seafloor-sampling-ml.git```
 
